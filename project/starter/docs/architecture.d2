@@ -1,0 +1,39 @@
+direction: right
+
+user: User {
+  shape: person
+}
+cli: "main.py: CLI"
+loader: "data_loader.py: validate deck"
+file_handler: "utils/file_handler.py: read JSON"
+deck: JSON deck {
+  shape: cylinder
+}
+factory: QuizModeFactory
+sequential: SequentialMode
+random: RandomMode
+adaptive: AdaptiveMode
+engine: QuizEngine
+ui: "ui.py: quiz interaction"
+history: "utils/history.py"
+store: Saved missed-card history {
+  shape: cylinder
+}
+
+user -> cli
+cli -> loader
+loader -> file_handler
+file_handler -> deck
+cli -> factory
+factory -> sequential
+factory -> random
+factory -> adaptive
+sequential -> engine
+random -> engine
+adaptive -> engine
+cli -> ui
+ui -> engine
+cli -> history
+ui -> history
+history -> store
+ui -> user

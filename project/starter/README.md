@@ -1,19 +1,78 @@
-# Flashcard Quizzer: Project Starter
+# The Flashcard Quizzer
 
-This is the starter for **The Flashcard Quizzer**, a command-line application that loads flashcards from a JSON file and quizzes you in sequential, random, or adaptive mode. You won't write the application by hand. You'll direct an AI coding agent to build it, review what it produces, and refine it until it meets the specification.
+Quiz yourself from a JSON deck in sequential, random, or adaptive order.
+From this directory, for example:
 
-The full specification (functional requirements, design patterns, required tests, and Definition of Done) is on the project's **Instructions** page in the classroom. This README explains what the starter gives you and how to get going.
+```bash
+python main.py --file data/glossary.json --mode sequential
+python main.py -f data/python_basics.json -m adaptive --stats
+```
+
+Decks may be a JSON array or an object containing a `cards` array. The array
+must contain at least one card, and each card must have nonempty string
+`front` and `back` fields. Invalid decks produce a helpful error.
+
+## Playing
+
+`-f` / `--file` selects the deck. `-m` / `--mode` chooses `sequential`
+(the default), `random`, or `adaptive`. Each card is asked once per session.
+Answers are compared case-insensitively after trimming surrounding whitespace.
+Empty answers are rejected and prompted again without affecting the score.
+Type `exit`, press Ctrl+C, or send EOF to end early. The summary shows
+completed questions, accuracy, and missed terms, including on an early exit.
+Because `exit` is reserved for quitting, it cannot be submitted as an answer.
+Feedback is green or red on supported terminals; set `NO_COLOR` to disable
+colors.
+
+Each answer updates local history under `~/.flashcard_quizzer/`. A wrong answer
+increases that card's unresolved miss count; a correct answer clears it.
+Adaptive mode asks cards with the most unresolved misses first, preserving deck
+order for ties. `--stats` shows the current deck's saved misses before the quiz;
+the session summary is always shown. History is associated with the resolved
+deck path and card contents, so moving a deck or changing a card starts new
+history for the affected deck or card. Identical cards in the same deck share
+history. Do not run simultaneous quizzes on the same deck: concurrent history
+updates are not coordinated.
+
+## Architecture
+
+Editable versions: [draw.io](docs/architecture.drawio) and
+[D2](docs/architecture.d2).
+
+```mermaid
+flowchart TD
+    User["User"] --> CLI["main.py: CLI"]
+    CLI --> Loader["data_loader.py: validate deck"]
+    Loader --> FileHandler["utils/file_handler.py: read JSON"]
+    FileHandler --> Deck["JSON deck"]
+    CLI --> Factory["QuizModeFactory"]
+    Factory --> Sequential["SequentialMode"]
+    Factory --> Random["RandomMode"]
+    Factory --> Adaptive["AdaptiveMode"]
+    Sequential --> Engine["QuizEngine"]
+    Random --> Engine
+    Adaptive --> Engine
+    CLI --> UI["ui.py: quiz interaction"]
+    UI --> Engine
+    CLI --> History["utils/history.py"]
+    UI --> History
+    History --> Store["Saved missed-card history"]
+    UI --> User
+```
 
 ## What's in the starter
 
 ```
 starter/
-├── main.py                 # Empty. Your entry point.
+├── main.py                 # CLI entry point
+├── data_loader.py          # Flashcard validation
+├── quiz_engine.py          # Quiz strategies, factory, and results
+├── ui.py                   # Terminal interaction
 ├── data/                   # Sample flashcard decks
 │   ├── glossary.json       # Array format: [{"front": ..., "back": ...}]
 │   └── python_basics.json  # Object format: {"cards": [...]}
-├── utils/                  # Your helper modules go here
-├── tests/                  # Empty. Your pytest suite goes here
+├── utils/                  # File and history helpers
+├── tests/                  # pytest suite
 ├── docs/
 │   ├── ai_edit_log.md      # AI interaction log (required, 5+ entries)
 │   ├── report_template.md  # Final report template (required, 1,000-1,500 words)
@@ -23,40 +82,57 @@ starter/
 └── requirements.txt        # Quality tools: pytest, black, flake8, mypy, ...
 ```
 
-`main.py`, `utils/` and `tests/` are deliberately empty. Building them is the project. Keep the folder structure: your agent uses it to separate concerns.
-
 The two sample decks use the two JSON formats your loader must support. You can add your own decks to `data/`.
 
 ## Getting started
 
-1. **Install the quality tools.**
+1. Install Python 3.9 or newer and open a terminal at the repository root.
+2. Create a virtual environment if `.venv` does not already exist. On Windows
+   PowerShell:
 
-   In the provided workspace:
-   ```bash
-   cd /voc/work/project/starter
-   python -m pip install -r requirements.txt
+   ```powershell
+   py -3 -m venv .venv
    ```
 
-   On your own computer, create and activate a virtual environment first, then install:
+   On macOS or Linux:
+
    ```bash
-   python3 -m venv venv
-   source venv/bin/activate  # On Windows: venv\Scripts\activate
-   python -m pip install -r requirements.txt
+   python3 -m venv .venv
    ```
 
-2. **Start your AI agent** from this folder (for example, `claude`) and work through the milestones on the Instructions page.
+3. Enter the starter directory and install its development dependencies. On
+   Windows PowerShell, use the virtual environment's interpreter directly:
 
-## When you're done
+   ```powershell
+   cd project\starter
+   ..\..\.venv\Scripts\python.exe -m pip install -r requirements.txt
+   ```
 
-These commands should work (the flags are part of the specification):
+   On macOS or Linux:
 
-```bash
-python main.py --help
-python main.py --mode sequential --file data/glossary.json
-python main.py -m adaptive -f data/python_basics.json
-```
+   ```bash
+   cd project/starter
+   ../../.venv/bin/python -m pip install -r requirements.txt
+   ```
 
-And these checks should pass:
+4. Verify the setup and start a quiz. From `project/starter`, on Windows:
+
+   ```powershell
+   ..\..\.venv\Scripts\python.exe -m pytest -q
+   ..\..\.venv\Scripts\python.exe main.py -f data\glossary.json
+   ```
+
+   On macOS or Linux:
+
+   ```bash
+   ../../.venv/bin/python -m pytest -q
+   ../../.venv/bin/python main.py -f data/glossary.json
+   ```
+
+These commands do not require activating the virtual environment. To use the
+shorter `python` commands below, first activate `.venv` in your shell.
+
+## Development checks
 
 ```bash
 python -m pytest --cov=. --cov-report=html   # target: >80% coverage

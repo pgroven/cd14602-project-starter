@@ -1,0 +1,146 @@
+"""Tests for flashcard loading and the validation CLI."""
+
+import json
+import subprocess
+import sys
+from pathlib import Path
+from typing import Any, Optional
+
+import pytest
+
+from data_loader import FlashcardLoadError, load_flashcards
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+@pytest.mark.parametrize("filename", ["glossary.json", "python_basics.json"])
+def test_loads_both_sample_formats(filename: str) -> None:
+    cards = load_flashcards(ROOT / "data" / filename)
+    assert cards
+    assert all(card["front"] and card["back"] for card in cards)
+
+
+@pytest.mark.parametrize(
+    ("data", "message"),
+    [
+        ({}, "'cards'"),
+        ({"cards": None}, "array"),
+        ("not an array", "array"),
+        ([], "at least one"),
+        ([None], "Card 1"),
+        ([{"front": "question"}], "'back'"),
+        ([{"back": "answer"}], "'front'"),
+        ([{"front": " ", "back": "answer"}], "'front'"),
+        ([{"front": "question", "back": 42}], "'back'"),
+    ],
+)
+def test_rejects_invalid_deck(tmp_path: Path, data: Any, message: str) -> None:
+    path = tmp_path / "deck.json"
+    path.write_text(json.dumps(data), encoding="utf-8")
+    with pytest.raises(FlashcardLoadError, match=message):
+        load_flashcards(path)
+
+
+def test_reports_missing_file(tmp_path: Path) -> None:
+    with pytest.raises(FlashcardLoadError, match="File not found"):
+        load_flashcards(tmp_path / "missing.json")
+
+
+def test_reports_directory_instead_of_file(tmp_path: Path) -> None:
+    with pytest.raises(FlashcardLoadError, match="Cannot read"):
+        load_flashcards(tmp_path)
+
+
+@pytest.mark.parametrize(
+    ("content", "message"),
+    [(b'{"cards": [}', "Invalid JSON"), (b"\xff", "valid UTF-8")],
+)
+def test_reports_unreadable_content(
+    tmp_path: Path, content: bytes, message: str
+) -> None:
+    path = tmp_path / "deck.json"
+    path.write_bytes(content)
+    with pytest.raises(FlashcardLoadError, match=message):
+        load_flashcards(path)
+
+
+@pytest.mark.parametrize("field", ["front", "back"])
+def test_cli_rejects_unpaired_surrogate(tmp_path: Path, field: str) -> None:
+    card = {"front": "question", "back": "answer"}
+    card[field] = "\ud800"
+    path = tmp_path / "invalid.json"
+    path.write_text(json.dumps([card]), encoding="utf-8")
+    result = subprocess.run(
+        [sys.executable, str(ROOT / "main.py"), "-f", str(path)],
+        capture_output=True,
+        text=True,
+        input="exit\n",
+        check=False,
+    )
+    assert result.returncode != 0
+    assert "Card 1" in result.stderr and f"'{field}'" in result.stderr
+    assert "Traceback" not in result.stderr
+
+
+def test_reports_excessively_nested_json(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    path = tmp_path / "nested.json"
+    path.write_text("[]", encoding="utf-8")
+
+    def reject_nesting(file: object) -> object:
+        raise RecursionError("too deep")
+
+    monkeypatch.setattr("utils.file_handler.json.load", reject_nesting)
+    with pytest.raises(FlashcardLoadError, match="nesting"):
+        load_flashcards(path)
+
+
+def test_loads_valid_unicode_card(tmp_path: Path) -> None:
+    path = tmp_path / "unicode.json"
+    data = '[{"front": "\\ud83d\\ude00", "back": "smile"}]'
+    path.write_text(data, encoding="utf-8")
+    assert load_flashcards(path)[0]["front"] == "\U0001f600"
+
+
+@pytest.mark.parametrize(
+    ("content", "message"),
+    [
+        (None, "File not found"),
+        ("{", "Invalid JSON"),
+        ('[{"front": "q"}]', "'back'"),
+    ],
+)
+def test_cli_reports_errors_without_traceback(
+    tmp_path: Path, content: Optional[str], message: str
+) -> None:
+    path = tmp_path / "bad.json"
+    if content is not None:
+        path.write_text(content, encoding="utf-8")
+    result = subprocess.run(
+        [sys.executable, str(ROOT / "main.py"), "--file", str(path)],
+        capture_output=True,
+        text=True,
+        check=False,
+    )
+    assert result.returncode != 0
+    assert message in result.stderr
+    assert "Traceback" not in result.stderr
+
+
+def test_cli_loads_deck() -> None:
+    result = subprocess.run(
+        [
+            sys.executable,
+            str(ROOT / "main.py"),
+            "-f",
+            str(ROOT / "data" / "glossary.json"),
+        ],
+        capture_output=True,
+        text=True,
+        input="exit\n",
+        check=False,
+    )
+    assert result.returncode == 0
+    assert "API" in result.stdout
+    assert "Total Questions | 0" in result.stdout
