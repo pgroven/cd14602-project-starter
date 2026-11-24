@@ -34,82 +34,28 @@ Explain your approach to solving the problem, including:
 Python
 ### Final Features
 List the features you implemented:
-- The Flashcard Quizzer loads a JSON deck, presents each card’s front, and checks the user’s answer against its back. Answers are case-insensitive; empty answers prompt the user again.
+- The Flashcard Quizzer loads a JSON deck, presents each card’s front, and checks the user’s answer against its answer.
+quiz_engine.py provides three modes: sequential, random, and adaptive.  The default is sequential. Adaptive mode asks previously missed cards first, using history saved between sessions.
 
-quiz_engine.py provides three modes: sequential, random, and adaptive. Adaptive mode asks previously missed cards first, using history saved between sessions.
-
+Answers are case insenstive and immediate feedback is provided which helps with memory retention.
 At the end, the app shows the number of questions answered, accuracy, and missed terms. Users can quit with exit or Ctrl+C
 
+Answers good or bad are acknowledge with red or green colors.
 - [ ] Core functionality #2
 For the report, separate the features the quiz needs to work from enhancements:
 
 Core functionality
 
-Load and validate flashcards from either supported JSON format.
-Ask each card and check answers without regard to capitalization.
-Offer sequential, random, and adaptive quiz modes.
-Show correct/incorrect feedback and a session summary with accuracy and missed terms.
+Core functionality is handled by main.py. Main.py creates the quiz engine and starts the interface.
+The  quiz engine is handled by quiz_engine.py.  Cards can be sequential, random or adaptive.
+The UI is handle by ui.py ui.py handles the prompting with feedback on right or wrong answers.
+History is handled by history.py which remembers missed cards.S
 
-I’ll distinguish the features essential to the quiz from enhancements, based on the implementation and report template.
 
-Read , lines 18 to 42
-Completed with input: {
-  "path": "C:\\Users\\Admin\\git\\cd14602-project-starter\\project\\starter\\docs\\report_template.md",
-  "view_range": [
-    18,
-    42
-  ]
-}
-
-Read , lines 1 to 42
-Completed with input: {
-  "path": "C:\\Users\\Admin\\git\\cd14602-project-starter\\project\\starter\\README.md",
-  "view_range": [
-    1,
-    42
-  ]
-}
-
-Read 
-Completed with input: {
-  "path": "C:\\Users\\Admin\\git\\cd14602-project-starter\\project\\starter\\ui.py"
-}
-
-Read , lines 1 to 110
-Completed with input: {
-  "path": "C:\\Users\\Admin\\git\\cd14602-project-starter\\project\\starter\\quiz_engine.py",
-  "view_range": [
-    1,
-    110
-  ]
-}
-
-Read , lines 1 to 75
-Completed with input: {
-  "path": "C:\\Users\\Admin\\git\\cd14602-project-starter\\project\\starter\\utils\\history.py",
-  "view_range": [
-    1,
-    75
-  ]
-}
 
 "Apply Patch" failed
 Completed with input: "*** Begin Patch\n*** Update File: project/starter/docs/ai_edit_log.md\n@@\n ## Your Log Entries\n \n+### 2026-11-23 - Explain core and additional features\n+\n+**Context:** The report template asks the author to list core and additional features.\n+**AI Tool Used:** GitHub Copilot\n+**Prompt/Request:** Explain the core functionality and additional features.\n+**AI Response:** Distinguished required quiz behavior from enhancements and outlined report-ready feature bullets based on the implementation.\n+**Changes Made:** No application or report content was changed.\n+**Reasoning:** The request was for explanation and guidance on categorizing the implemented features.\n+**Outcome:** Provided a suggested core/additional feature breakdown.\n+**Lessons Learned:** Separate baseline requirements from quality-of-life features in the report.\n+\n ### 2026-11-19 - Count functions and classes\n*** End Patch\n"
 Tool execution failed: Failed to apply patch: Error: Failed to find expected lines in c:\Users\Admin\git\cd14602-project-starter\project\starter\docs\ai_edit_log.md:
-## Your Log Entries
-
-### 2026-11-19 - Count functions and classes
-
-Read , lines 55 to 75
-Completed with input: {
-  "path": "C:\\Users\\Admin\\git\\cd14602-project-starter\\project\\starter\\docs\\ai_edit_log.md",
-  "view_range": [
-    55,
-    75
-  ]
-}
-
-Edit 
 
 For the report, separate the features the quiz needs to work from enhancements:
 
@@ -142,35 +88,39 @@ Describe your typical workflow when working with AI:
 1. How did you structure your requests/prompts?
    Requests to AI were structured with extreme detail setting boundaries of what the final outcome should look like.
 2. What types of tasks did you ask AI to help with?
+   Tasks were in order based each step requirements.
    AI was used for coding but manualy reviewed for readability and completeness
 3. How did you review and validate AI-generated code?
    Code was reviewed vsually and by running unit tests and hands on testing of the  Quiz.
 4. What was your process for refining AI suggestions?
    Defining each task completely in a single step helped break down multiple tasks
+
 ### Most Valuable AI Interactions
-Document 3-5 specific examples where AI assistance was particularly helpful:
-AI was particularly helpful in getting the initial python code started.
-
-#### Example 1: [Brief Title]
-**Context:** What were you trying to accomplish?
-**AI Prompt:** What did you ask the AI to do?
-**AI Response:** What code/suggestions did it provide?
-**Your Changes:** What modifications did you make and why?
-**Outcome:** What was the final result?
-
-#### Example 2: [Brief Title]
-**Context:** 
-**AI Prompt:** 
-**AI Response:** 
+1. **Context:**   Needed to get initial python code started
+**AI Prompt:**  I inputed the requirements and waited
+**AI Response:** AI would write code but I needed to request clarification on which was the best method to use.
 **Your Changes:** 
-**Outcome:** 
+2. **Context:**  I am not veryfamilair with design strategies
+ **AI Prompt:**   Asked AI for design strategies.
+ **AI Response:**   AI was able to help with design patterns
+**Your Changes:** I followed AI recomendations based on the evidence provided.
+**Outcome:** Design patters match the requirements
 
-[Continue for additional examples...]
+3. Requested AI to complete diagrams
+**Context:** Create up to date diagrams
+**AI Prompt:** Asked for AI to create diagrams
+**AI Response:** What code/suggestions did it provide
+**Your Changes:** I had to install plugins and requirements for diagrams
+**Outcome:** Architectural diagrams match the existing code.
+
+
+
 
 ### Challenges with AI Collaboration
 Describe any difficulties you encountered:
 - What types of requests did AI struggle with?
-AI  did not struggle with any requests but did ask clarificatoin on quiz behavior.
+  AI took a long time with some tasks  and I did not know if it was stuck.
+AI did not struggle with any requests but did ask clarificatoin on quiz behavior.
 - When did you need to significantly modify AI suggestions?
 Significant modification of AI suggestions was not needed.
 - What patterns did you notice in AI strengths/weaknesses?
@@ -188,9 +138,13 @@ Document the practices you implemented:
 ### Testing Strategy
 Describe your approach to testing:
 - What types of tests did you write?
+  Some green unit tests were written by hand.
 - What was your test coverage percentage?
+95%
 - How did you ensure code reliability?
+  Manual review and code linting helped ensure reliability.
 - Did you use test-driven development?
+  TDD was used for unit tests.
 
 ### Design Patterns Used
 The project uses two patterns in quiz_engine.py:
@@ -217,9 +171,9 @@ Report-ready summary: “I organized the application into focused modules to sep
 
 ## Technical Challenges and Solutions
 
-### Challenge 1: [Brief Title]
-**Problem:** Describe the technical challenge you faced
-Getting the base code started wa a challenge and AI was able to ge me started.  I learned how to handle AI uses and strentgths.
+### Challenge 1: Initial Coding 
+**Problem:** 
+Getting the base code started wa a challenge and AI was able to ge me started.  I learned how to handle AI uses and strengths.
 
 
 ## Code Quality Analysis
@@ -255,14 +209,14 @@ The score is 4 as there are always improvements that can be made
 
 ### Technical Skills Developed
 What new technical skills did you acquire or improve?
-- New skills I learned were Programming concepts, Tools and frameworks, testing practices and code organization
+- New skills I learned were programming concepts, tools and frameworks, testing practices and code organization
 
 ### AI Collaboration Skills
 What did you learn about working with AI assistants?
 - Effective prompting techniques requried very specific input and required output
 - Code review and validation strategies
 - When to rely on AI vs. manual coding.  AI can be used for many tasks if the complexiity is not too great.
--  AI has limitations when the application concept is new to AI and can drop existing features of code that    already exist.
+-  AI has limitations when the application concept is new to AI and can drop existing features of code that already exist.
 ### Software Engineering Insights
 What software engineering principles did you better understand?
 -All of the  design patterns, testing strategies and code organization were new to me.
@@ -272,15 +226,22 @@ What software engineering principles did you better understand?
 ### What Worked Well
 Reflect on the most successful aspects of your project:
 - Which AI collaboration strategies were most effective?
-- What software engineering practices had the biggest impact?
-- What are you most proud of in your final code?
 
+- What software engineering practices had the biggest impact?
+  Defining all code must follwing correct formatting and linting practices prevented rewriting of code.
+- What are you most proud of in your final code?
+  Completeness of the whole product
 ### What Could Be Improved
 Identify areas for future improvement:
-- What would you do differently next time?
+- What would you do differently next time? 
+  Breaking the instruction to make AI coding faster.  AI kept on prompting for authorization.  Some of this could be authomated.  
 - Which aspects of your code could be enhanced?
+  As the deck grows larger focus could be on performance enhancements.
 - How could you improve your AI collaboration process?
+  More steps on keeping a human in the loop for collaboration could help create a more defined product.
+  
 
+  While coding the docs can be updated at the same time.
 ### Future Enhancements
 If you had more time, what features would you add?
 - An API interface would be very useful and more real world like.
@@ -295,6 +256,7 @@ If you had more time, what features would you add?
 
 Summarize your key takeaways from this project:
 - How has your understanding of AI-assisted development evolved? 
+  I did not think AI was this advanced at creating code from a nonexistent baseline.
   This is the first app I have code from the ground up so the process has been invaluable.
 - What software engineering practices will you continue to use?
   Allowing AI offer insight can be valuable.
@@ -305,14 +267,13 @@ Summarize your key takeaways from this project:
 ### Appendix A: AI Interaction Log
 Reference your detailed AI interaction log (`ai_edit_log.md`) and highlight key entries.
 AI interaction is logged in ai_edit.log.md
+Editing of the Python code was not needed because AI was able to satisy all of the requirements
 ### Appendix B: Code Statistics
-Include any relevant code metrics, test results, or performance measurements.
-
+Code metrics passed all linting tests with mypy and flake8. Performance measurements are not needed because the deck is very small. 
 ### Appendix C: Additional Resources
-I used youtube and google to do a deep dive on the programming concepts
+Used youtube and google to do a deep dive on the programming concepts like singleton balance classes and popular api interfaces.
 
 ---
 
-**Total Report Length:** Aim for 3259 words  
+**Total Report Length:** 2208 words  
 **Due Date:** [12-23-2026]  
-**Submission Instructions:** [Insert submission details]
