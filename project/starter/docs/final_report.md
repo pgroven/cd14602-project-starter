@@ -140,7 +140,7 @@ Describe your approach to testing:
 - What types of tests did you write?
   Some green unit tests were written by hand.
 - What was your test coverage percentage?
-95%
+98%
 - How did you ensure code reliability?
   Manual review and code linting helped ensure reliability.
 - Did you use test-driven development?
@@ -228,7 +228,7 @@ Reflect on the most successful aspects of your project:
 - Which AI collaboration strategies were most effective?
 
 - What software engineering practices had the biggest impact?
-  Defining all code must follwing correct formatting and linting practices prevented rewriting of code.
+  Defining all code thoroughly follwing correct formatting and linting practices prevented rewriting of code.
 - What are you most proud of in your final code?
   Completeness of the whole product
 ### What Could Be Improved
@@ -267,7 +267,11 @@ Summarize your key takeaways from this project:
 ### Appendix A: AI Interaction Log
 Reference your detailed AI interaction log (`ai_edit_log.md`) and highlight key entries.
 AI interaction is logged in ai_edit.log.md
-Editing of the Python code was not needed because AI was able to satisy all of the requirements
+Editing of the Python code was not directly needed because AI was able to satisy all of the requirements.  I reviewed the code and made changes to meet satisfy the requirements.
+Code Changes
+1.  Define the modularity
+2. Add unit tests to test positve and  negative outcomes.
+3. Ran unit tests manually and used that to check against the requirements.
 ### Appendix B: Code Statistics
 Code metrics passed all linting tests with mypy and flake8. Performance measurements are not needed because the deck is very small. 
 ### Appendix C: Additional Resources
