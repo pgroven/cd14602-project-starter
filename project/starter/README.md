@@ -11,6 +11,8 @@ python main.py -f data/python_basics.json -m adaptive --stats
 Decks may be a JSON array or an object containing a `cards` array. The array
 must contain at least one card, and each card must have nonempty string
 `front` and `back` fields. Invalid decks produce a helpful error.
+If access is denied, the current user needs read permission on the deck file
+and search/traverse permission on its parent directories.
 
 ## Playing
 
@@ -23,6 +25,20 @@ completed questions, accuracy, and missed terms, including on an early exit.
 Because `exit` is reserved for quitting, it cannot be submitted as an answer.
 Feedback is green or red on supported terminals; set `NO_COLOR` to disable
 colors.
+
+Diagnostic logs go to stderr and UTC-dated files under
+`~/.flashcard_quizzer/logs/`. They include full deck and history paths, card
+fronts and backs, and submitted answers. Use `--verbose` to include debug
+details and tracebacks for errors. Treat logs as sensitive and restrict access
+to the log directory.
+
+At startup, the app deletes its dated log files once every entry in the file
+is at least 30 days old. Daily grouping can retain an entry for nearly one
+additional day, and logs remain longer if the app is not started. Retention
+does not cover stderr captured elsewhere or the separate quiz history. If
+cleanup fails, the app reports the error and does not start the quiz. If a
+log write fails during a quiz, it warns once and continues logging to stderr.
+Do not run simultaneous quizzes: their log writes are not coordinated.
 
 Each answer updates local history under `~/.flashcard_quizzer/`. A wrong answer
 increases that card's unresolved miss count; a correct answer clears it.
@@ -58,6 +74,13 @@ flowchart TD
     UI --> History
     History --> Store["Saved missed-card history"]
     UI --> User
+    CLI -->|configure and log| Logger["Python logging: flashcard_quizzer"]
+    UI -->|answer diagnostics| Logger
+    Logger --> Stderr["stderr: diagnostic output"]
+    Logger --> Handler["DailyLogHandler"]
+    Handler -->|append| Logs["UTC-dated diagnostic logs"]
+    CLI --> Cleanup["Startup cleanup: files at least 30 days old"]
+    Cleanup -->|remove expired files| Logs
 ```
 
 ## What's in the starter
@@ -68,6 +91,7 @@ starter/
 ├── data_loader.py          # Flashcard validation
 ├── quiz_engine.py          # Quiz strategies, factory, and results
 ├── ui.py                   # Terminal interaction
+├── gui.py                  # Placeholder for a future graphical interface
 ├── data/                   # Sample flashcard decks
 │   ├── glossary.json       # Array format: [{"front": ..., "back": ...}]
 │   └── python_basics.json  # Object format: {"cards": [...]}

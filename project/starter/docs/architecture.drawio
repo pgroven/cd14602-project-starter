@@ -43,6 +43,21 @@
         <mxCell id="store" value="Saved missed-card history" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
           <mxGeometry x="1020" y="550" width="160" height="80" as="geometry" />
         </mxCell>
+        <mxCell id="logger" value="Python logging: flashcard_quizzer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="420" y="730" width="180" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="stderr" value="stderr: diagnostic output" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#d5e8d4;strokeColor=#82b366;" vertex="1" parent="1">
+          <mxGeometry x="690" y="700" width="190" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="log_handler" value="DailyLogHandler" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="690" y="800" width="190" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="log_files" value="UTC-dated diagnostic logs&#xa;~/.flashcard_quizzer/logs/" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#fff2cc;strokeColor=#d6b656;" vertex="1" parent="1">
+          <mxGeometry x="1020" y="790" width="200" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="cleanup" value="Startup cleanup: remove fully expired files after at least 30 days" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;" vertex="1" parent="1">
+          <mxGeometry x="420" y="930" width="200" height="80" as="geometry" />
+        </mxCell>
         <mxCell id="e1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="user" target="cli"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="e2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="cli" target="loader"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="e3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="loader" target="file_handler"><mxGeometry relative="1" as="geometry" /></mxCell>
@@ -60,6 +75,13 @@
         <mxCell id="e15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="ui" target="history"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="e16" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="history" target="store"><mxGeometry relative="1" as="geometry" /></mxCell>
         <mxCell id="e17" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="ui" target="user"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e18" value="configure and log" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="cli" target="logger"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e19" value="answer diagnostics" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="ui" target="logger"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="logger" target="stderr"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e21" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="logger" target="log_handler"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e22" value="append" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="log_handler" target="log_files"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e23" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="cli" target="cleanup"><mxGeometry relative="1" as="geometry" /></mxCell>
+        <mxCell id="e24" value="remove expired files" style="edgeStyle=orthogonalEdgeStyle;rounded=0;html=1;endArrow=block;endFill=1;" edge="1" parent="1" source="cleanup" target="log_files"><mxGeometry relative="1" as="geometry" /></mxCell>
       </root>
     </mxGraphModel>
   </diagram>

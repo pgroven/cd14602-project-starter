@@ -32,6 +32,10 @@ def cards() -> list[Flashcard]:
 
 
 def test_factory_and_sequential_order(cards: list[Flashcard]) -> None:
+    """Create sequential mode, preserve deck order, and reject an unknown mode.
+
+    Does not verify all factory modes here or modifications to the input deck.
+    """
     mode = QuizModeFactory.create("sequential")
     assert isinstance(mode, SequentialMode)
     assert mode.order(cards, {}) == cards
@@ -42,6 +46,12 @@ def test_factory_and_sequential_order(cards: list[Flashcard]) -> None:
 def test_random_shuffles_copy(
     cards: list[Flashcard], monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    """Replace shuffling with reversal and check order and the first input card.
+
+    Does not check real randomness, distribution, or every input element after
+    the call; checking one card does not prove the entire input is unchanged.
+    """
+
     def reverse(items: list[Flashcard]) -> None:
         items.reverse()
 
@@ -52,6 +62,10 @@ def test_random_shuffles_copy(
 
 
 def test_adaptive_prioritizes_misses(cards: list[Flashcard]) -> None:
+    """Order cards by two different saved miss counts ahead of an unseen card.
+
+    Does not check ties, duplicate cards, or updating history during ordering.
+    """
     mode = QuizModeFactory.create("adaptive")
     assert isinstance(mode, AdaptiveMode)
     history = {card_key(cards[1]): 1, card_key(cards[2]): 2}
@@ -59,6 +73,11 @@ def test_adaptive_prioritizes_misses(cards: list[Flashcard]) -> None:
 
 
 def test_answer_updates_stats_and_history(cards: list[Flashcard]) -> None:
+    """Check answer normalization, scoring, miss recording, and miss clearing.
+
+    Does not test persistence, all Unicode case variants, or the final accuracy
+    after the third answer.
+    """
     history: dict[str, int] = {}
     engine = QuizEngine(cards, SequentialMode(), history)
     assert engine.stats.accuracy == 0
@@ -75,6 +94,10 @@ def test_answer_updates_stats_and_history(cards: list[Flashcard]) -> None:
 def test_history_round_trip_and_deck_isolation(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    """Save and reload history while isolating two distinct deck paths.
+
+    Does not cover concurrent writers, identical cards, or path relocation.
+    """
     monkeypatch.setattr(Path, "home", lambda: tmp_path)
     first = history_path(tmp_path / "first.json")
     second = history_path(tmp_path / "second.json")
@@ -88,6 +111,11 @@ def test_history_round_trip_and_deck_isolation(
 def test_history_location_error_is_reported(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    """Convert a simulated unavailable home directory into a HistoryError.
+
+    Does not check other path-resolution failures or the full error message.
+    """
+
     def fail_home() -> Path:
         raise RuntimeError("home directory unavailable")
 
@@ -98,6 +126,10 @@ def test_history_location_error_is_reported(
 
 @pytest.mark.parametrize("data", ["{", '{"card": true}', '{"card": 0}', "[]"])
 def test_rejects_bad_history(tmp_path: Path, data: str) -> None:
+    """Reject malformed JSON, boolean or zero counts, and a non-object history.
+
+    Checks only the exception type, not its message or all invalid values.
+    """
     path = tmp_path / "history.json"
     path.write_text(data, encoding="utf-8")
     with pytest.raises(HistoryError):
@@ -107,6 +139,10 @@ def test_rejects_bad_history(tmp_path: Path, data: str) -> None:
 def test_reports_excessively_nested_history(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    """Convert a simulated history decoder RecursionError into a HistoryError.
+
+    Does not exercise actual deeply nested JSON or determine the nesting limit.
+    """
     path = tmp_path / "history.json"
     path.write_text("{}", encoding="utf-8")
 
@@ -119,6 +155,10 @@ def test_reports_excessively_nested_history(
 
 
 def test_reports_history_write_failure(tmp_path: Path) -> None:
+    """Report a save failure when the intended parent path is a regular file.
+
+    Does not simulate other I/O failures or inspect temporary-file cleanup.
+    """
     parent = tmp_path / "not_a_directory"
     parent.write_text("x", encoding="utf-8")
     with pytest.raises(HistoryError, match="Cannot save history"):
@@ -128,6 +168,11 @@ def test_reports_history_write_failure(tmp_path: Path) -> None:
 def test_save_failure_preserves_existing_history(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
+    """Preserve existing saved history when the final file replacement fails.
+
+    Simulates os.replace failure; it does not check temporary-file cleanup,
+    crashes, concurrent writes, or failures at earlier write stages.
+    """
     path = tmp_path / "history.json"
     save_history(path, {"key": 1})
 

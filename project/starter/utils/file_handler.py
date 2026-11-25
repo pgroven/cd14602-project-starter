@@ -17,6 +17,13 @@ def read_json(path: Union[str, Path]) -> object:
             return json.load(file)
     except FileNotFoundError as exc:
         raise FileReadError(f"File not found: {file_path}") from exc
+    except PermissionError as exc:
+        detail = exc.strerror or str(exc)
+        raise FileReadError(
+            f"Cannot read {file_path}: permission denied ({detail}). "
+            "Choose a file; the current user needs read permission on it "
+            "and search/traverse permission on its parent directories."
+        ) from exc
     except UnicodeDecodeError as exc:
         raise FileReadError(f"File is not valid UTF-8: {file_path}") from exc
     except json.JSONDecodeError as exc:

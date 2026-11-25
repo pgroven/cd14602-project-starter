@@ -1,5 +1,6 @@
 """Terminal interaction for the flashcard quiz."""
 
+import logging
 import os
 import sys
 from pathlib import Path
@@ -8,6 +9,8 @@ from typing import Mapping, Sequence
 from data_loader import Flashcard
 from quiz_engine import QuizEngine, SessionStats, card_key
 from utils.history import save_history
+
+logger = logging.getLogger("flashcard_quizzer.ui")
 
 
 def show_history(
@@ -58,6 +61,12 @@ def run_quiz(engine: QuizEngine, history_file: Path) -> None:
         if answer.strip().casefold() == "exit":
             print("Quiz ended.")
             break
+        logger.info(
+            "Card: front=%r, back=%r, answer=%r",
+            card["front"],
+            card["back"],
+            answer,
+        )
         correct = engine.answer(card, answer)
         show_feedback(correct, card["back"])
         save_history(history_file, engine.history)

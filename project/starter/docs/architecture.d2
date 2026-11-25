@@ -19,6 +19,13 @@ history: "utils/history.py"
 store: Saved missed-card history {
   shape: cylinder
 }
+logger: "Python logging: flashcard_quizzer"
+stderr: "stderr: diagnostic output"
+log_handler: "DailyLogHandler"
+log_files: "UTC-dated diagnostic logs\n~/.flashcard_quizzer/logs/" {
+  shape: cylinder
+}
+cleanup: "Startup cleanup: remove fully expired\nfiles after at least 30 days"
 
 user -> cli
 cli -> loader
@@ -37,3 +44,10 @@ cli -> history
 ui -> history
 history -> store
 ui -> user
+cli -> logger: configure and log
+ui -> logger: answer diagnostics
+logger -> stderr
+logger -> log_handler
+log_handler -> log_files: append
+cli -> cleanup
+cleanup -> log_files: remove expired files

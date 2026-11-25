@@ -6,7 +6,6 @@
 
 ## Executive Summary
 
-Provide a brief overview of your project (2-3 paragraphs):
 The Flashcard Quizzer is a Python command-line app for studying terms from JSON flashcard decks. Users can practice cards in sequential, random, or adaptive order. It checks answers without regard to case, provides immediate feedback, and reports session accuracy and missed terms.
 
 The app validates deck data and saves missed-card history between sessions so adaptive mode can prioritize cards that need more practice. AI assistants helped with implementation and review; the code and tests were checked with pytest, flake8, Black, and mypy.
@@ -15,7 +14,6 @@ The app validates deck data and saves missed-card history between sessions so ad
 - What were the main features and functionality?
 - How did you collaborate with AI throughout the development process?
 
-## Project Overview
 
 ### Problem Statement
 Problem Statement: Reviewing flashcards in a fixed order can make it harder to focus on terms that need extra practice. The app provides a command-line way to study JSON decks and revisit missed cards.
@@ -24,46 +22,26 @@ Solution Approach: The CLI parses file and mode options. A data loader validates
 
 Final Features: List the working modes, JSON formats, validation and error handling, blank-answer behavior, graceful exit options, adaptive history, and session statistics. Don’t call it an AI-powered application; AI assisted its development.
 
-Describe the problem your application solves or the need it addresses.
-This AI quiz provides a good example of the ease of designing and building an AI application.
 
 ### Solution Approach
-Explain your approach to solving the problem, including:
 - Key design decisions were based on the Product Requirements.
 - Technology stack used
 Python
 ### Final Features
-List the features you implemented:
 - The Flashcard Quizzer loads a JSON deck, presents each card’s front, and checks the user’s answer against its answer.
 quiz_engine.py provides three modes: sequential, random, and adaptive.  The default is sequential. Adaptive mode asks previously missed cards first, using history saved between sessions.
 
 Answers are case insenstive and immediate feedback is provided which helps with memory retention.
 At the end, the app shows the number of questions answered, accuracy, and missed terms. Users can quit with exit or Ctrl+C
 
-Answers good or bad are acknowledge with red or green colors.
+Answers good or bad are acknowledged with red or green colors.
 - [ ] Core functionality #2
-For the report, separate the features the quiz needs to work from enhancements:
-
-Core functionality
 
 Core functionality is handled by main.py. Main.py creates the quiz engine and starts the interface.
 The  quiz engine is handled by quiz_engine.py.  Cards can be sequential, random or adaptive.
-The UI is handle by ui.py ui.py handles the prompting with feedback on right or wrong answers.
-History is handled by history.py which remembers missed cards.S
+The UI is handle by ui.py, ui.py handles the prompting with feedback on right or wrong answers.
+History is handled by history.py which remembers missed cards.
 
-
-
-"Apply Patch" failed
-Completed with input: "*** Begin Patch\n*** Update File: project/starter/docs/ai_edit_log.md\n@@\n ## Your Log Entries\n \n+### 2026-11-23 - Explain core and additional features\n+\n+**Context:** The report template asks the author to list core and additional features.\n+**AI Tool Used:** GitHub Copilot\n+**Prompt/Request:** Explain the core functionality and additional features.\n+**AI Response:** Distinguished required quiz behavior from enhancements and outlined report-ready feature bullets based on the implementation.\n+**Changes Made:** No application or report content was changed.\n+**Reasoning:** The request was for explanation and guidance on categorizing the implemented features.\n+**Outcome:** Provided a suggested core/additional feature breakdown.\n+**Lessons Learned:** Separate baseline requirements from quality-of-life features in the report.\n+\n ### 2026-11-19 - Count functions and classes\n*** End Patch\n"
-Tool execution failed: Failed to apply patch: Error: Failed to find expected lines in c:\Users\Admin\git\cd14602-project-starter\project\starter\docs\ai_edit_log.md:
-
-For the report, separate the features the quiz needs to work from enhancements:
-
-**Core functionality**
-- Load and validate flashcards from either supported JSON format.
-- Ask each card and check answers without regard to capitalization.
-- Offer sequential, random, and adaptive quiz modes.
-- Show correct/incorrect feedback and a session summary with accuracy and missed terms.
 
 **Additional features**
 - Save missed-card history between sessions; adaptive mode prioritizes cards with more misses.
@@ -71,8 +49,6 @@ For the report, separate the features the quiz needs to work from enhancements:
 - Reprompt on blank answers and exit gracefully on `exit`, Ctrl+C, or EOF.
 - Use terminal colors when supported, with a `NO_COLOR` option.
 - Report helpful errors for invalid decks or unreadable history.
-
-These are suggestions for categorizing the implemented features; describe them in your own words in the report.
 
 ## AI Collaboration Experience
 
@@ -84,7 +60,6 @@ List the AI tools/assistants you worked with:
 - [ ] Other: ________
 
 ### Collaboration Workflow
-Describe your typical workflow when working with AI:
 1. How did you structure your requests/prompts?
    Requests to AI were structured with extreme detail setting boundaries of what the final outcome should look like.
 2. What types of tasks did you ask AI to help with?
@@ -120,7 +95,7 @@ Describe your typical workflow when working with AI:
 Describe any difficulties you encountered:
 - What types of requests did AI struggle with?
   AI took a long time with some tasks  and I did not know if it was stuck.
-AI did not struggle with any requests but did ask clarificatoin on quiz behavior.
+AI did not struggle with any requests but did ask clarification on quiz behavior.
 - When did you need to significantly modify AI suggestions?
 Significant modification of AI suggestions was not needed.
 - What patterns did you notice in AI strengths/weaknesses?
@@ -172,7 +147,6 @@ Report-ready summary: “I organized the application into focused modules to sep
 ## Technical Challenges and Solutions
 
 ### Challenge 1: Initial Coding 
-**Problem:** 
 Getting the base code started wa a challenge and AI was able to ge me started.  I learned how to handle AI uses and strengths.
 
 
@@ -181,21 +155,13 @@ Getting the base code started wa a challenge and AI was able to ge me started.  
 ### Metrics
 Provide quantitative measures of your code quality:
 - Lines of code: The Python project has 839 physical lines: 377 application lines and 462 test lines. This includes blank lines and comments.
-- Test coverage: _95__%
+- Test coverage: _98__%
 Application statement coverage is 95% (222 of 233 statements). All 44 tests passed. Subprocess execution was not included in the coverage measurement.
 - Number of functions/classes:
 Read skill `python-fact-grounded-coding`
 Completed with input: {"skill":"python-fact-grounded-coding"}
 
 Search for `^\s*(?:async\s+)?def\s+|^\s*class\s+`
-
-Edit 
-
-The application has **11 classes** and **19 functions**: 11 standalone functions and 8 methods.
-
-The test files add 35 function definitions, including helpers.
-- Linting score: 
-Flake8 reported 0 linting violations.
 
 ### Self-Assessment
 Rate yourself (1-5, 5 being excellent) and provide justification:
@@ -239,9 +205,8 @@ Identify areas for future improvement:
   As the deck grows larger focus could be on performance enhancements.
 - How could you improve your AI collaboration process?
   More steps on keeping a human in the loop for collaboration could help create a more defined product.
-  
-
   While coding the docs can be updated at the same time.
+  
 ### Future Enhancements
 If you had more time, what features would you add?
 - An API interface would be very useful and more real world like.
@@ -251,10 +216,9 @@ If you had more time, what features would you add?
 - Better user experience
    A better user experience would log the username and record quiz progress
 - Performance optimizations
-  Since the deck is so small performance optimizatoins were not needed.
+  Since the deck is so small performance optimizations were not needed.
 ## Conclusion
 
-Summarize your key takeaways from this project:
 - How has your understanding of AI-assisted development evolved? 
   I did not think AI was this advanced at creating code from a nonexistent baseline.
   This is the first app I have code from the ground up so the process has been invaluable.

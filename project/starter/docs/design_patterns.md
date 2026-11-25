@@ -4,6 +4,40 @@
 
 This guide provides examples of common design patterns that you can implement in your AI-assisted development project. Use these patterns to improve code organization, maintainability, and demonstrate software engineering best practices.
 
+## Patterns in the Flashcard Quizzer
+
+The application implements the following patterns in
+[`quiz_engine.py`](../quiz_engine.py):
+
+- **Strategy:** `QuizMode.order()` defines the ordering interface.
+  `SequentialMode` preserves deck order, `RandomMode` shuffles a copy, and
+  `AdaptiveMode` orders cards by unresolved misses, retaining deck order for
+  ties. `QuizEngine` receives a mode and calls it when constructing the quiz.
+- **Factory:** `QuizModeFactory.create()` maps the selected `--mode` name to a
+  new strategy. Unknown names raise `ValueError`; the CLI also restricts mode
+  choices.
+
+The other patterns and task-list code below are illustrative examples, not
+claims that the quiz implements them.
+
+### Logging and retention
+
+The CLI configures the `flashcard_quizzer` logger with a stderr handler and
+`DailyLogHandler` from
+[`utils/diagnostic_logging.py`](../utils/diagnostic_logging.py). The UI's
+child logger also emits answer diagnostics. The handlers write diagnostics to
+stderr and UTC-dated files under `~/.flashcard_quizzer/logs/`, while prompts,
+feedback, and summaries remain console output. `--verbose` enables debug
+messages and error tracebacks. Logs contain card contents, submitted answers,
+and full paths, so they should be protected.
+
+At startup, `prepare_log_directory()` removes dated log files only after all
+their entries are at least 30 days old. Daily grouping can add nearly one day
+of retention, and cleanup happens only when the app starts. This does not
+expire captured stderr or saved quiz history. Cleanup failure prevents the
+quiz from starting; a file-write failure warns once and leaves stderr logging
+active.
+
 ## 1. Strategy Pattern
 
 The Strategy pattern allows you to select algorithms at runtime. It's useful when you have multiple ways to perform a task.
